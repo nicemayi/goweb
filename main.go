@@ -1,22 +1,25 @@
 package main
 
 import (
-	"fmt"
 	"goweb/framework"
 	"net/http"
 )
 
 func main() {
-	router := framework.New()
+	r := framework.New()
 
-	router.GET("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "URL.Path = %q\n", r.URL.Path)
+	r.GET("/", func(c *framework.Context) {
+		c.HTML(http.StatusOK, "<h1>Hello from framework</h1>")
 	})
-	router.GET("/hello", func(w http.ResponseWriter, r *http.Request) {
-		for k, v := range r.Header {
-			fmt.Fprintf(w, "Header[%q] = %q\n", k, v)
-		}
+	r.GET("/hello", func(c *framework.Context) {
+		c.String(http.StatusOK, "hello %s, you're at %s\n", c.Query("name"), c.Path)
+	})
+	r.POST("/login", func(c *framework.Context) {
+		c.JSON(http.StatusOK, framework.H{
+			"username": c.PostForm("username"),
+			"password": c.PostForm("passowrd"),
+		})
 	})
 
-	router.Run(":9999")
+	r.Run(":9999")
 }

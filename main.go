@@ -3,9 +3,9 @@ package main
 import (
 	"fmt"
 	"goweb/framework"
-	"html/template"
 	"log"
 	"net/http"
+	"text/template"
 	"time"
 )
 
@@ -88,4 +88,15 @@ func main() {
 	}
 
 	r.Run(":9999")
+
+	// test error recovery
+	// r := framework.Default()
+	// r.GET("/", func(c *framework.Context) {
+	// 	c.String(http.StatusOK, "Hello zzz\n")
+	// })
+	// r.GET("/panic", func(c *framework.Context) {
+	// 	names := []string{"zzzzz"}
+	// 	c.String(http.StatusOK, names[100])
+	// })
+	// r.Run(":9999")
 }

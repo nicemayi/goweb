@@ -8,26 +8,35 @@ import (
 func main() {
 	r := framework.New()
 
-	r.GET("/", func(c *framework.Context) {
-		c.HTML(http.StatusOK, "<h1>Hello from framework</h1>")
+	r.GET("/index", func(c *framework.Context) {
+		c.HTML(http.StatusOK, "<h1>Index Page</h1>")
 	})
-	r.GET("/hello", func(c *framework.Context) {
-		c.String(http.StatusOK, "hello %s, you're at %s\n", c.Query("name"), c.Path)
-	})
-	r.GET("/hello/:name", func(c *framework.Context) {
-		c.String(http.StatusOK, "hello %s, you're at %s\n", c.Param("name"), c.Path)
-	})
-	r.GET("/assets/*filepath", func(c *framework.Context) {
-		c.JSON(http.StatusOK, framework.H{
-			"filepath": c.Param("filepath"),
+
+	v1 := r.Group("/v1")
+	{
+		v1.GET("/", func(c *framework.Context) {
+			c.HTML(http.StatusOK, "<h1>Hello from framework!")
 		})
-	})
-	r.POST("/login", func(c *framework.Context) {
-		c.JSON(http.StatusOK, framework.H{
-			"username": c.PostForm("username"),
-			"password": c.PostForm("passowrd"),
+
+		v1.GET("/hello", func(c *framework.Context) {
+			// /hello?name=zhewang
+			c.String(http.StatusOK, "hello %s, you're at %s\n", c.Query("name"), c.Path)
 		})
-	})
+	}
+
+	v2 := r.Group("/v2")
+	{
+		v2.GET("/hello/:name", func(c *framework.Context) {
+			// /hello/zhewang
+			c.String(http.StatusOK, "hello %s, you're at %s\n", c.Param("name"), c.Path)
+		})
+		v2.POST("/login", func(c *framework.Context) {
+			c.JSON(http.StatusOK, framework.H{
+				"username": c.PostForm("username"),
+				"password": c.PostForm("password"),
+			})
+		})
+	}
 
 	r.Run(":9999")
 }
